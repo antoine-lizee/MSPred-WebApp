@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -78,11 +79,14 @@ func get(ctx *web.Context, val string) string {
 
 //Main method
 func main() {
+	//Parse the port as command-line argument
+	port := *flag.Int("port", 80, "the port to bind to.")
+	flag.Parse()
 
 	//Load the data
 	ParseCsv("data.csv")
 
 	//Launch the webserver
 	web.Get("/prediction(.*)", get)
-	web.Run("0.0.0.0:80")
+	web.Run("0.0.0.0:" + strconv.Itoa(port))
 }
