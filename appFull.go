@@ -11,13 +11,17 @@ import (
 	"github.com/hoisie/web"
 )
 
+//Here, I define the ype that will hold the data for each patient.
+//One predicion "Y/N" and one probability associated to it.
 type Record struct {
 	Pred bool    `json:"pred"`
 	P    float64 `json:"p"`
 }
 
+//The whole data structure
 var data = map[string]Record{}
 
+//Open the .csv file, load the data in the data structure
 func ParseCsv(filename string) {
 	fi, err := os.Open(filename)
 	if err != nil {
@@ -53,8 +57,9 @@ func ParseCsv(filename string) {
 
 }
 
+//This is the handler for the request. It is the main code bloc, that does the work when a request is received.
 func get(ctx *web.Context, val string) string {
-	// Parse
+	// 1. Parse
 	epicID := ctx.Params["epicid"]
 	record := data[epicID]
 	fmt.Println(record)
@@ -71,12 +76,13 @@ func get(ctx *web.Context, val string) string {
 	return string(jsonResponse)
 }
 
+//Main method
 func main() {
 
 	//Load the data
 	ParseCsv("data.csv")
 
 	//Launch the webserver
-	web.Get("/(.*)", get)
-	web.Run("0.0.0.0:9999")
+	web.Get("/prediction(.*)", get)
+	web.Run("0.0.0.0:80")
 }
