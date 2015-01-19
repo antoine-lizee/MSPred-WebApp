@@ -54,7 +54,17 @@ func ParseCsv(filename string) {
 
 	fmt.Println("Read", lineCount, "Records.")
 
-	fmt.Println("See for yourself", data)
+	fmt.Println("See for yourself")
+	i := 0
+	for k, v := range data {
+		if i < 20 {
+			fmt.Println(k, ":", v)
+			i++
+		} else {
+			fmt.Println("...")
+			break
+		}
+	}
 
 }
 
@@ -80,7 +90,7 @@ func get(ctx *web.Context, val string) string {
 //Main method
 func main() {
 	//Parse the port as command-line argument
-	port := *flag.Int("port", 80, "the port to bind to.")
+	port := flag.Int("port", 80, "the port to bind to.")
 	flag.Parse()
 
 	//Load the data
@@ -88,5 +98,12 @@ func main() {
 
 	//Launch the webserver
 	web.Get("/prediction(.*)", get)
-	web.Run("0.0.0.0:" + strconv.Itoa(port))
+	web.Run("0.0.0.0:" + strconv.Itoa(*port))
 }
+
+//Remarks & Code:
+//Dummy data given by:
+// IDS <- 1:400
+// bool <- IDS < 200
+// proba <- ifelse(bool, 0.7124, 0.34)
+// write.table(file = "data.csv", col.names = FALSE, row.names = FALSE, data.frame(IDS, bool+0, proba), sep = ",")
